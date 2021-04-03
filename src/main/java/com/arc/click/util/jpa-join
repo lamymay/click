@@ -1,0 +1,55 @@
+@Autowired
+    private ArticleRepository articleRepository;
+
+@Override
+    public QueryResult<ArticleModel> findArticle(SearchArticle searchArticle) {
+        Sort sort = new Sort(Sort.Direction.DESC,"postTime");
+        Specification<Article> specification = getWhereClause(searchArticle);
+        Page<Article> all = articleRepository.findAll(specification, new PageRequest(searchArticle.getPage() - 1, searchArticle.getLimit(),sort));
+        QueryResult<ArticleModel> result = new QueryResult<>();
+        List<ArticleModel> list = new ArrayList<>(searchArticle.getLimit());
+        for (Article article:all.getContent()){
+            ArticleModel model = new ArticleModel(article.getAid(),article.getTitle(),article.getPostTime(),article.isRecommend(),
+                    article.getRecommendTime(),article.getIp(),article.getUser().getUid(),article.getUser().getNickname());
+            list.add(model);
+        }
+        result.setRows(list);
+        result.setTotal(all.getTotalElements());
+        return result;
+    }
+
+    /**
+     * 动态生成where语句
+     * @param searchArticle
+     * @return
+     */
+    private Specification<Article> getWhereClause(final SearchArticle searchArticle){
+        return new Specification<Article>() {
+            @Override
+            public Predicate toPredicate(Root<Article> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> predicate = new ArrayList<>();
+                if(searchArticle.getPostTimeStart()!=null){
+                    predicate.add(cb.greaterThanOrEqualTo(root.get("postTime").as(Date.class), searchArticle.getPostTimeStart()));
+                }
+                if(searchArticle.getPostTimeEnd()!=null){
+                    predicate.add(cb.lessThanOrEqualTo(root.get("postTime").as(Date.class), searchArticle.getPostTimeEnd()));
+                }
+                if(searchArticle.getRecTimeStart()!=null){
+                    predicate.add(cb.greaterThanOrEqualTo(root.get("recommendTime").as(Date.class), searchArticle.getRecTimeStart()));
+                }
+                if (searchArticle.getRecTimeEnd()!=null){
+                    predicate.add(cb.lessThanOrEqualTo(root.get("recommendTime").as(Date.class), searchArticle.getRecTimeEnd()));
+                }
+                if (StringUtils.isNotBlank(searchArticle.getNickname())){
+                    //两张表关联查询
+                    Join<Article,User> userJoin = root.join(root.getModel().getSingularAttribute("user",User.class),JoinType.LEFT);
+                    predicate.add(cb.like(userJoin.get("nickname").as(String.class), "%" + searchArticle.getNickname() + "%"));
+                }
+                Predicate[] pre = new Predicate[predicate.size()];
+                return query.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
+    }
+
+
+
