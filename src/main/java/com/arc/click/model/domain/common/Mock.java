@@ -63,7 +63,6 @@ public class Mock implements Serializable {
     @Column(name = "version")
     private String version;
 
-
     @Column(name = "reserve",columnDefinition = "json")
     private String reserve;//保留字段JSON
 
