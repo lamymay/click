@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     public LoginUser checkUserLogin(String username, String password) {
-        LoginUser loginUser = new LoginUser();
-        return loginUser;
+        LoginUser user = new LoginUser();
+        long id = System.currentTimeMillis();
+        user.setId(id);
+        user.setLogin(true);
+        return user;
     }
 }

@@ -7,11 +7,9 @@ import com.arc.click.service.app.ClickService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,28 +25,7 @@ public class ClickServiceImpl implements ClickService {
 
     @Override
     public ResponseEntity<Map<String, Object>> checkIn(Click click) {
-        ResponseEntity<Map<String, Object>> response = null;
-        Map<String, Object> tempMap = new HashMap<>();
-        if (click == null) {
-            tempMap.put("error", "参数错误");
-            response = new ResponseEntity(tempMap, null, HttpStatus.INTERNAL_SERVER_ERROR);
-            return response;
-        }
-        try {
-            Click save = clickRepository.save(click);
-            if (save == null) {
-                tempMap.put("error", "记录保存失败,请重试!");
-            } else {
-                tempMap.put("data", true);
-                tempMap.put("插入的数据是", click);
-            }
-            response = ResponseEntity.ok(tempMap);
-        } catch (Exception exception) {
-
-            log.debug("异常={}", exception);
-            tempMap.put("exception", exception.getCause() + exception.getMessage());
-        }
-        return response;
+        return ResponseEntity.ok(null);
     }
 
     @Override
