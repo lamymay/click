@@ -2,9 +2,13 @@ package com.arc.click.service.app.impl;
 
 import com.arc.click.dao.app.ClickRepository;
 import com.arc.click.model.domain.app.Click;
+import com.arc.click.model.request.app.ClickQuery;
 import com.arc.click.service.app.ClickService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,11 +26,13 @@ public class ClickServiceImpl implements ClickService {
     private ClickRepository clickRepository;
 
     @Override
-    public Map<String, Object> checkIn(Click click) {
-        HashMap<String, Object> tempMap = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> checkIn(Click click) {
+        ResponseEntity<Map<String, Object>> response = null;
+        Map<String, Object> tempMap = new HashMap<>();
         if (click == null) {
             tempMap.put("error", "参数错误");
-            return tempMap;
+            response = new ResponseEntity(tempMap, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
         try {
             Click save = clickRepository.save(click);
@@ -36,11 +42,27 @@ public class ClickServiceImpl implements ClickService {
                 tempMap.put("data", true);
                 tempMap.put("插入的数据是", click);
             }
+            response = ResponseEntity.ok(tempMap);
         } catch (Exception exception) {
+
             log.debug("异常={}", exception);
             tempMap.put("exception", exception.getCause() + exception.getMessage());
         }
-        return tempMap;
+        return response;
+    }
 
+    @Override
+    public ResponseEntity<Map<String, Object>> delete(ClickQuery query) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> update(Click model) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Page<Click>> listPage(ClickQuery query) {
+        return null;
     }
 }

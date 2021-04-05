@@ -55,7 +55,7 @@ public class ClickRestController {
         click.setUserId(userId);
         click.setIp(fromHost);
 
-        return ResponseEntity.ok(clickService.checkIn(click));
+        return clickService.checkIn(click);
     }
 
 

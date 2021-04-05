@@ -1,7 +1,9 @@
 package com.arc.click.model.domain.app;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -17,8 +19,7 @@ import java.util.Date;
  * @author yechao
  * @since 2021/4/2 13:43
  */
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name = "app_click")
 public class Click implements Serializable {
